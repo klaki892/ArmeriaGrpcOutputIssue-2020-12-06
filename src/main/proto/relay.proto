@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+service RelayTimeService{
+  rpc listenForEvents(IdentificationMessage) returns (stream CurrentTimeMessage);
+  rpc readyUp(IdentificationMessage) returns (IdentificationMessage);
+}
+
+message CounterRequestMessage{
+  int32 counterNumber = 1;
+}
+message IdentificationMessage{
+  string id = 1;
+}
+
+message CurrentTimeMessage {
+  int64 TimeFromEpoch = 1;
+}
