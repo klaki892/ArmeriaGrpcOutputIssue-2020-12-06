@@ -1,9 +1,7 @@
 import io.grpc.stub.StreamObserver;
 
 import java.util.HashMap;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -14,8 +12,6 @@ import java.util.concurrent.TimeUnit;
 public class RelayTimeService extends RelayTimeServiceGrpc.RelayTimeServiceImplBase {
 
 
-    static int readyCounter = 0;
-    static String counterID = UUID.randomUUID().toString();
     static CompletableFuture<Boolean> sendResponses = new CompletableFuture<>();
     private final HashMap<String, LinkedBlockingQueue<Boolean>> idToQueueMap;
 
@@ -27,32 +23,16 @@ public class RelayTimeService extends RelayTimeServiceGrpc.RelayTimeServiceImplB
 
     @Override
     public void readyUp(Relay.IdentificationMessage request, StreamObserver<Relay.IdentificationMessage> responseObserver) {
-        incrementReadyCounter();
         idToQueueMap.put(request.getId(), new LinkedBlockingQueue<>());
+        System.out.println(request.getId() + " Connected!");
         responseObserver.onNext(Relay.IdentificationMessage.newBuilder().setId(request.getId()).build());
         responseObserver.onCompleted();
-    }
-
-    private void incrementReadyCounter() {
-        readyCounter++;
-        System.out.println(readyCounter);
-        if (readyCounter >= 1)
-            sendResponses.complete(true);
     }
 
     @Override
     public void listenForEvents(Relay.IdentificationMessage request, StreamObserver<Relay.CurrentTimeMessage> responseObserver) {
 
         int messagesSent = 0;
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-        try {
-            sendResponses.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
 
         while (true) {
             try {
@@ -71,9 +51,5 @@ public class RelayTimeService extends RelayTimeServiceGrpc.RelayTimeServiceImplB
                 return;
             }
         }
-
-
-//            }
-//        }).start();
     }
 }
