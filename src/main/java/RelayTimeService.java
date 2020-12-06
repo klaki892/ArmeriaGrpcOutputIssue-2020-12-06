@@ -1,7 +1,6 @@
 import io.grpc.stub.StreamObserver;
 
 import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -12,12 +11,9 @@ import java.util.concurrent.TimeUnit;
 public class RelayTimeService extends RelayTimeServiceGrpc.RelayTimeServiceImplBase {
 
 
-    static CompletableFuture<Boolean> sendResponses = new CompletableFuture<>();
     private final HashMap<String, LinkedBlockingQueue<Boolean>> idToQueueMap;
 
-
     public RelayTimeService(HashMap<String, LinkedBlockingQueue<Boolean>> idToQueueMap) {
-
         this.idToQueueMap = idToQueueMap;
     }
 
@@ -31,19 +27,16 @@ public class RelayTimeService extends RelayTimeServiceGrpc.RelayTimeServiceImplB
 
     @Override
     public void listenForEvents(Relay.IdentificationMessage request, StreamObserver<Relay.CurrentTimeMessage> responseObserver) {
-
         int messagesSent = 0;
 
         while (true) {
             try {
-
                 Boolean canSendMessage = idToQueueMap.get(request.getId()).poll(30, TimeUnit.SECONDS);
                 if (canSendMessage != null && canSendMessage) {
                     System.out.println("Sent messsage to: " + request.getId());
                     responseObserver.onNext(Relay.CurrentTimeMessage.newBuilder().setTimeFromEpoch(System.currentTimeMillis()).build());
                     messagesSent++;
                 }
-
             } catch (InterruptedException ignored) {
             } catch (Exception ex) {
                 ex.printStackTrace();

@@ -20,6 +20,7 @@ public class GrpcServerMain {
                 .addService(new RelayTimeService(queueMap))
                 .build();
 
+        //ask the server console who to queue messages for
         new Thread(() -> {
             while (true) {
                 Scanner in = new Scanner(System.in);
@@ -38,7 +39,6 @@ public class GrpcServerMain {
             }
         }).start();
 
-//        new Thread(() -> {
         try {
             server.start();
             System.out.println("Server started, listening on " + ArmeriaServerMain.PORT);
@@ -48,7 +48,6 @@ public class GrpcServerMain {
             System.err.println(e);
             System.exit(-1);
         }
-//        }).start();
 
     }
 }

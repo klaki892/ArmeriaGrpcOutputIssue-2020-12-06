@@ -8,6 +8,7 @@ import com.linecorp.armeria.server.cors.CorsService;
 import com.linecorp.armeria.server.cors.CorsServiceBuilder;
 import com.linecorp.armeria.server.grpc.GrpcService;
 import com.linecorp.armeria.server.grpc.GrpcServiceBuilder;
+import com.linecorp.armeria.server.logging.AccessLogWriter;
 import com.linecorp.armeria.server.logging.LoggingService;
 import io.grpc.protobuf.services.ProtoReflectionService;
 
@@ -31,7 +32,7 @@ public class ArmeriaServerMain {
         ServerBuilder sb = Server.builder();
         //configurations
         sb.http(PORT);
-//        sb.accessLogWriter(AccessLogWriter.combined(), true);
+        sb.accessLogWriter(AccessLogWriter.combined(), true);
 
 
         HashMap<String, LinkedBlockingQueue<Boolean>> queueMap = new HashMap<>();
@@ -66,6 +67,7 @@ public class ArmeriaServerMain {
         future.join();
         System.out.println("Server finished starting up - " + server.defaultHostname() + ":" + server.activeLocalPort());
 
+        //ask the server console who to queue messages for
         new Thread(() -> {
             while (true) {
                 Scanner in = new Scanner(System.in);
