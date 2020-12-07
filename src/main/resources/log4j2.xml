@@ -27,7 +27,7 @@
         <Logger name="test.project.logger" level="INFO" additivity="false">
             <AppenderRef ref="stdout"/>
         </Logger>
-        <Root level="INFO" additivity="true">
+        <Root level="DEBUG" additivity="true">
             <AppenderRef ref="stdout"/>
         </Root>
     </Loggers>

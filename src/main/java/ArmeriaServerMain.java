@@ -41,6 +41,7 @@ public class ArmeriaServerMain {
                 .addService(new RelayTimeService(queueMap));
         //support GRPC-WEB and JSON formats
         grpcGameService.supportedSerializationFormats(GrpcSerializationFormats.values());
+        grpcGameService.useBlockingTaskExecutor(true);
 
         //handle CORS
         CorsServiceBuilder corsBuilder = CorsService.builderForAnyOrigin()

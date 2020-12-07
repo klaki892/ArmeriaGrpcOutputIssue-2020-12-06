@@ -50,7 +50,9 @@ public class TimeListeningClient {
 
             @Override
             public void onError(Throwable throwable) {
+                throwable.printStackTrace();
                 weDone[0] = true;
+                System.exit(1);
 
             }
 
